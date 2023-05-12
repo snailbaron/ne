@@ -8,54 +8,43 @@ namespace bi {
 
 namespace {
 
-void prettyPrint(std::ostream& output, const Element& x, size_t offset)
+void prettyPrint(
+    std::ostream& output, const Element& x, size_t startOffset, size_t offset)
 {
     switch (x.type()) {
         case Type::Empty:
-            output << "<>";
+            output << std::string(startOffset, ' ') << "<>";
             break;
         case Type::String:
-            output << "\"" << x.string() << "\"";
+            output << std::string(startOffset, ' ') << "\"" << x.string() << "\"";
             break;
         case Type::Number:
-            output << x.number();
+            output << std::string(startOffset, ' ') << x.number();
             break;
         case Type::List:
         {
-            output << "[";
-            const auto& list = x.list();
-            if (auto it = list.begin(); it != list.begin()) {
-                prettyPrint(output, *it++, offset);
-                for (; it != list.end(); ++it) {
-                    output << ", ";
-                    prettyPrint(output, *it, offset);
-                }
+            output << std::string(startOffset, ' ') << "[\n";
+            for (const auto& listElement : x.list()) {
+                prettyPrint(output, listElement, offset + 4, offset + 4);
+                output << "\n";
             }
-            output << "]";
+            output << std::string(offset, ' ') << "]";
             break;
         }
         case Type::Dictionary:
         {
-            output << "{\n";
-            offset += 4;
+            output << std::string(startOffset, ' ') << "{\n";
 
-            size_t maxKeyLength = 0;
             for (const auto& [key, value] : x.dictionary()) {
-                maxKeyLength = std::max(maxKeyLength, key.length());
-            }
-
-            output << std::left;
-            for (const auto& [key, value] : x.dictionary()) {
-                output << std::string(offset, ' ') <<
-                    std::setw(maxKeyLength + 2) << "\"" + key + "\"" << " : ";
+                output << std::string(offset + 4, ' ') <<
+                    "\"" << key << "\"" << " : ";
                 if (key == "pieces") {
                     output << "<pieces>";
                 } else {
-                    prettyPrint(output, value, offset);
+                    prettyPrint(output, value, 0, offset + 4);
                 }
                 output << "\n";
             }
-            offset -= 4;
             output << std::string(offset, ' ') << "}";
             break;
         }
@@ -155,6 +144,14 @@ Element& Element::operator[](const std::string& key)
     return _data->as<Type::Dictionary>()[key];
 }
 
+size_t Element::size() const
+{
+    if (_data->type() == Type::List) {
+        return _data->as<Type::List>().size();
+    }
+    return _data->as<Type::Dictionary>().size();
+}
+
 const Element Element::empty {};
 
 Type Data::type() const
@@ -164,7 +161,7 @@ Type Data::type() const
 
 std::ostream& operator<<(std::ostream& output, const Element& element)
 {
-    prettyPrint(output, element, 0);
+    prettyPrint(output, element, 0, 0);
     return output;
 }
 

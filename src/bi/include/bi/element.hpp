@@ -47,6 +47,8 @@ public:
     const Element& operator[](const std::string& key) const;
     Element& operator[](const std::string& key);
 
+    size_t size() const;
+
     static const Element empty;
 
 private:
