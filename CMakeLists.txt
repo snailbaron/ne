@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(hehe)
+project (ne)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
@@ -18,3 +18,4 @@ add_library(hehe
 target_include_directories(hehe PUBLIC include)
 
 add_subdirectory(tools)
+add_subdirectory(src)
