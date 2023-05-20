@@ -99,7 +99,10 @@ std::string TcpListen::name() const
 
 TcpStream TcpListen::accept()
 {
-    return TcpStream{errnoCheck(::accept(_fd, nullptr, nullptr))};
+    auto stream = TcpStream{errnoCheck(::accept(_fd, nullptr, nullptr))};
+    stream.exceptions(std::ios::badbit | std::ios::failbit);
+    stream.rdbuf();
+    return stream;
 }
 
 } // namespace hehe

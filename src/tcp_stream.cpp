@@ -19,6 +19,8 @@ TcpStreambuf::TcpStreambuf(TcpConnection&& connection, size_t bufferSize)
 
 int TcpStreambuf::sync()
 {
+    std::cout << "TcpStreambuf::sync" << std::endl;
+
     // "Syncing" input seems to be impossible for a socket, so do nothing in the
     // get area.
 
@@ -32,6 +34,8 @@ int TcpStreambuf::sync()
 
 int TcpStreambuf::underflow()
 {
+    std::cout << "TcpStreambuf::underflow" << std::endl;
+
     if (gptr() >= egptr()) {
         setg(eback(), eback(), egptr());
         if (!_connection.read({eback(), egptr()})) {
@@ -44,6 +48,8 @@ int TcpStreambuf::underflow()
 
 int TcpStreambuf::overflow(int ch)
 {
+    std::cout << "TcpStreambuf::overflow" << std::endl;
+
     if (pptr() > pbase()) {
         _connection.write({pbase(), pptr()});
         setp(pbase(), epptr());
@@ -58,17 +64,33 @@ int TcpStreambuf::overflow(int ch)
 
 int TcpStreambuf::pbackfail(int)
 {
+    std::cout << "TcpStreambuf::pbackfail" << std::endl;
     throw Error{"TcpStreambuf::pbackfail called"};
 }
 
 TcpStream::TcpStream(std::string_view address, uint16_t port)
     : _streambuf{TcpConnection{address, port}}
 {
-    std::cout << "TcpStream: port " << port << std::endl;
+    rdbuf(&_streambuf);
 }
 
 TcpStream::TcpStream(int fd)
     : _streambuf{TcpConnection{fd}}
-{ }
+{
+    rdbuf(&_streambuf);
+}
+
+TcpStream::TcpStream(TcpStream&& other) noexcept
+    : _streambuf(std::move(other._streambuf))
+{
+    rdbuf(&_streambuf);
+}
+
+TcpStream& TcpStream::operator=(TcpStream&& other) noexcept
+{
+    _streambuf = std::move(other._streambuf);
+    rdbuf(&_streambuf);
+    return *this;
+}
 
 } // namespace hehe

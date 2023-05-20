@@ -17,6 +17,6 @@ int main(int argc, char* argv[])
     stream.exceptions(std::ios::badbit | std::ios::failbit);
 
     for (std::string line; std::getline(std::cin, line); ) {
-        stream << line << "\n";
+        stream << line << std::endl;
     }
 }

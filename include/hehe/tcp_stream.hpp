@@ -41,6 +41,9 @@ class TcpStream : public std::iostream {
 public:
     TcpStream(std::string_view address, uint16_t port);
 
+    TcpStream(TcpStream&& other) noexcept;
+    TcpStream& operator=(TcpStream&& other) noexcept;
+
 private:
     explicit TcpStream(int fd);
 
