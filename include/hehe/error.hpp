@@ -33,17 +33,21 @@ private:
     std::string _message;
 };
 
-template <class U, class V = int>
-inline auto errnoCheck(
-    U returnValue,
-    V returnValueIndicatingError = -1,
+inline void throwErrno(
     std::source_location sourceLocation = std::source_location::current())
 {
-    if (returnValue == returnValueIndicatingError) {
-        auto errorCode = errno;
-        auto stream = std::ostringstream{};
-        stream << errorCode << ": " << std::strerror(errorCode);
-        throw Error{stream.str(), sourceLocation};
+    int errorCode = errno;
+    auto stream = std::ostringstream{};
+    stream << errorCode << ": " << std::strerror(errorCode);
+    throw Error{stream.str(), sourceLocation};
+}
+
+inline auto errnoCheck(
+    std::integral auto returnValue,
+    std::source_location sourceLocation = std::source_location::current())
+{
+    if (returnValue == -1) {
+        throwErrno(sourceLocation);
     }
     return returnValue;
 }
