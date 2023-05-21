@@ -8,14 +8,14 @@ namespace hehe {
 
 class TcpListen {
 public:
-    TcpListen();
+    TcpListen(uint16_t port = 0);
     ~TcpListen();
 
     TcpListen(const TcpListen&) = delete;
     TcpListen& operator=(const TcpListen&) = delete;
 
-    TcpListen(TcpListen&&) = default;
-    TcpListen& operator=(TcpListen&&) = default;
+    TcpListen(TcpListen&& other) noexcept;
+    TcpListen& operator=(TcpListen&& other) noexcept;
 
     std::string name() const;
     TcpStream accept();

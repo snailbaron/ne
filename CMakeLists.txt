@@ -7,9 +7,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 set(CMAKE_COLOR_DIAGNOSTICS TRUE)
 
 add_library(hehe
+    src/io.cpp
     src/tcp_connection.cpp
     src/tcp_listen.cpp
     src/tcp_stream.cpp
+    src/tcp_streambuf.cpp
 )
 target_include_directories(hehe PUBLIC include)
 

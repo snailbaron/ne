@@ -1,6 +1,7 @@
 #include <hehe/tcp_connection.hpp>
 
 #include <hehe/error.hpp>
+#include <hehe/io.hpp>
 
 #include <netdb.h>
 #include <sys/socket.h>
@@ -9,6 +10,8 @@
 
 #include <cstring>
 #include <string>
+
+#include <iostream>
 
 namespace hehe {
 
@@ -37,12 +40,14 @@ TcpConnection::TcpConnection(std::string_view address, uint16_t port)
             errors << std::strerror(errorCode) << "\n";
             continue;
         }
+        std::cout << "created connection socket " << _fd << std::endl;
 
         if (connect(_fd, info->ai_addr, info->ai_addrlen) == -1) {
             auto errorCode = errno;
             errors << " * " << std::strerror(errorCode) << "\n";
             continue;
         }
+        std::cout << "connected socket " << _fd << std::endl;
 
         break;
     }
@@ -56,7 +61,10 @@ TcpConnection::TcpConnection(std::string_view address, uint16_t port)
 
 TcpConnection::TcpConnection(int fd)
     : _fd{fd}
-{ }
+{
+    std::cout << "starting to manage socket " << fd <<
+        " as a TCP connection" << std::endl;
+}
 
 TcpConnection::TcpConnection(TcpConnection&& other) noexcept
 {
@@ -66,6 +74,8 @@ TcpConnection::TcpConnection(TcpConnection&& other) noexcept
 TcpConnection& TcpConnection::operator=(TcpConnection&& other) noexcept
 {
     if (_fd != -1) {
+        std::cout << "shutting down socket " << _fd << std::endl;
+        shutdown(_fd, SHUT_RDWR);
         close(_fd);
     }
     _fd = -1;
@@ -78,37 +88,81 @@ TcpConnection& TcpConnection::operator=(TcpConnection&& other) noexcept
 TcpConnection::~TcpConnection()
 {
     if (_fd != -1) {
+        std::cout << "shutting down socket " << _fd << std::endl;
+        shutdown(_fd, SHUT_RDWR);
         close(_fd);
     }
 }
 
-bool TcpConnection::read(std::span<char> target)
+size_t TcpConnection::read(std::span<char> target)
 {
-    auto result = errnoCheck(::read(_fd, target.data(), target.size()));
-    return result > 0;
+    return errnoCheck(::read(_fd, target.data(), target.size()));
+}
+
+void TcpConnection::write(const char* buffer, size_t size)
+{
+    size_t written = 0;
+    for (;;) {
+        auto bytesWritten =
+            errnoCheck(::write(_fd, buffer + written, size - written));
+        std::cout << "written " << bytesWritten << " bytes into socket " <<
+            _fd << std::endl;
+        written += bytesWritten;
+        if (written >= size) {
+            break;
+        }
+    }
+}
+
+void TcpConnection::write(const unsigned char* buffer, size_t size)
+{
+    write(reinterpret_cast<const char*>(buffer), size);
+}
+
+void TcpConnection::write(const signed char* buffer, size_t size)
+{
+    write(reinterpret_cast<const char*>(buffer), size);
+}
+
+void TcpConnection::write(const std::byte* buffer, size_t size)
+{
+    write(reinterpret_cast<const char*>(buffer), size);
+}
+
+void TcpConnection::write(std::span<const char> data)
+{
+    write(data.data(), data.size());
+}
+
+void TcpConnection::write(std::span<const unsigned char> data)
+{
+    write(data.data(), data.size());
+}
+
+void TcpConnection::write(std::span<const signed char> data)
+{
+    write(data.data(), data.size());
 }
 
 void TcpConnection::write(std::span<const std::byte> data)
 {
-    size_t written = 0;
-    size_t left = data.size();
-    for (;;) {
-        auto bytesWritten =
-            errnoCheck(::write(_fd, data.data() + written, left));
-        if (bytesWritten == left) {
-            break;
-        }
-
-        written += bytesWritten;
-        left -= bytesWritten;
-    }
+    write(data.data(), data.size());
 }
 
 void TcpConnection::write(std::string_view string)
 {
-    write(std::span<const std::byte>{
-        reinterpret_cast<const std::byte*>(string.data()),
-        string.size()});
+    write(string.data(), string.size());
+}
+
+std::string TcpConnection::peer() const
+{
+    auto storage = sockaddr_storage{};
+    auto storageLen = socklen_t{sizeof(storage)};
+    errnoCheck(::getpeername(
+        _fd, reinterpret_cast<sockaddr*>(&storage), &storageLen));
+    auto stream = std::ostringstream{};
+    stream << storage;
+    return stream.str();
 }
 
 } // namespace hehe

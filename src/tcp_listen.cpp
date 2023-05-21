@@ -1,6 +1,7 @@
 #include <hehe/tcp_listen.hpp>
 
 #include <hehe/error.hpp>
+#include <hehe/io.hpp>
 
 #include <arpa/inet.h>
 #include <netdb.h>
@@ -9,10 +10,11 @@
 #include <unistd.h>
 
 #include <cstring>
+#include <iostream>
 
 namespace hehe {
 
-TcpListen::TcpListen()
+TcpListen::TcpListen(uint16_t port)
 {
     addrinfo* info = nullptr;
     {
@@ -23,7 +25,7 @@ TcpListen::TcpListen()
         };
         if (auto code = getaddrinfo(
                 nullptr,
-                "0",
+                std::to_string(port).c_str(),
                 &desiredInfo,
                 &info); code != 0) {
             throw Error{gai_strerror(code)};
@@ -38,18 +40,27 @@ TcpListen::TcpListen()
             errors << std::strerror(errorCode) << "\n";
             continue;
         }
+        std::cout << "created socket " << _fd << " for listening" << std::endl;
 
         if (bind(_fd, info->ai_addr, info->ai_addrlen) == -1) {
-            auto errorCode = errno;
-            errors << std::strerror(errorCode) << "\n";
+            const char* error = std::strerror(errno);
+            std::cout << "could not bind socket " << _fd << " to address " << *info->ai_addr << ": " << error << std::endl;
+            errors << error << "\n";
+            close(_fd);
+            _fd = -1;
             continue;
         }
+        std::cout << "bound socket " << _fd << " to address" << std::endl;
 
         if (listen(_fd, 20) == -1) {
-            auto errorCode = errno;
-            errors << std::strerror(errorCode) << "\n";
+            const char* error = std::strerror(errno);
+            std::cout << "could not listen on socket " << _fd << ": " << error << std::endl;
+            errors << error << "\n";
+            close(_fd);
+            _fd = -1;
             continue;
         }
+        std::cout << "now listening on socket " << _fd << std::endl;
 
         break;
     }
@@ -61,9 +72,26 @@ TcpListen::TcpListen()
     freeaddrinfo(info);
 }
 
+TcpListen::TcpListen(TcpListen&& other) noexcept
+{
+    std::swap(_fd, other._fd);
+}
+
+TcpListen& TcpListen::operator=(TcpListen&& other) noexcept
+{
+    if (_fd != -1) {
+        close(_fd);
+        _fd = -1;
+    }
+    std::swap(_fd, other._fd);
+    return *this;
+}
+
 TcpListen::~TcpListen()
 {
-    close(_fd);
+    if (_fd != -1) {
+        close(_fd);
+    }
 }
 
 std::string TcpListen::name() const
