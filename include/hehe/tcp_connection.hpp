@@ -9,14 +9,18 @@ namespace hehe {
 
 class TcpConnection {
 public:
+    TcpConnection() = default;
     TcpConnection(std::string_view address, uint16_t port);
+    TcpConnection(TcpConnection&&) noexcept;
+    TcpConnection& operator=(TcpConnection&&) noexcept;
     ~TcpConnection();
 
     TcpConnection(const TcpConnection&) = delete;
     TcpConnection& operator=(const TcpConnection&) = delete;
 
-    TcpConnection(TcpConnection&&) noexcept;
-    TcpConnection& operator=(TcpConnection&&) noexcept;
+    void connect(std::string_view address, uint16_t port);
+    void disconnect();
+    bool connected() const;
 
     size_t read(std::span<char> target);
 
@@ -33,7 +37,6 @@ public:
     void write(std::string_view string);
 
     std::string peer() const;
-
     int fd() const { return _fd; }
 
 private:

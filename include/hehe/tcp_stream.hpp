@@ -17,7 +17,6 @@ public:
     TcpStream& operator=(TcpStream&& other) noexcept;
 
     std::string peer() const { return _streambuf.peer(); }
-    int fd() const { return _streambuf.fd(); }
 
 private:
     explicit TcpStream(int fd);

@@ -24,24 +24,6 @@ public:
     int pbackfail(int c) override;
 
     std::string peer() const { return _connection.peer(); }
-    int fd() const { return _connection.fd(); }
-
-    // Unused virtual functions:
-    void imbue(const std::locale& loc) override;
-    std::streambuf* setbuf(char_type* s, std::streamsize n) override;
-    std::streampos seekoff(
-        off_type off,
-        std::ios_base::seekdir dir,
-        std::ios_base::openmode which =
-            std::ios_base::in | std::ios_base::out) override;
-    std::streampos seekpos(
-        std::streampos pos,
-        std::ios_base::openmode which =
-            std::ios_base::in | std::ios_base::out) override;
-    std::streamsize showmanyc() override;
-    int uflow() override;
-    std::streamsize xsgetn(char_type* s, std::streamsize count) override;
-    std::streamsize xsputn(const char_type* s, std::streamsize count) override;
 
 private:
     TcpConnection _connection;
