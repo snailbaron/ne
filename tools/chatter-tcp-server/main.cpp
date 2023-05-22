@@ -1,4 +1,4 @@
-#include <hehe.hpp>
+#include <ne.hpp>
 
 #include <unistd.h>
 
@@ -8,7 +8,7 @@
 #include <iostream>
 #include <vector>
 
-using namespace hehe;
+using namespace ne;
 
 using namespace std::chrono_literals;
 

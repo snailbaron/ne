@@ -1,4 +1,4 @@
-#include <bi.hpp>
+#include <ne.hpp>
 
 #include <array>
 #include <cstdlib>
@@ -22,13 +22,13 @@ int main(int argc, char* argv[]) try
         return EXIT_FAILURE;
     }
 
-    auto document = bi::Element{};
+    auto document = ne::Element{};
     if (argc == 2) {
         auto input = std::ifstream{argv[1]};
         input.exceptions(std::ios::badbit | std::ios::failbit);
-        document = bi::parseElement(input);
+        document = ne::parseElement(input);
     } else {
-        document = bi::parseElement(std::cin);
+        document = ne::parseElement(std::cin);
     }
 
     std::cout << document << "\n";

@@ -1,7 +1,7 @@
-#include <hehe/tcp_listen.hpp>
+#include <ne/tcp_listen.hpp>
 
-#include <hehe/error.hpp>
-#include <hehe/io.hpp>
+#include <ne/error.hpp>
+#include <ne/io.hpp>
 
 #include <arpa/inet.h>
 #include <netdb.h>
@@ -12,7 +12,7 @@
 #include <cstring>
 #include <iostream>
 
-namespace hehe {
+namespace ne {
 
 TcpListen::TcpListen(uint16_t port)
 {
@@ -133,4 +133,4 @@ TcpStream TcpListen::accept()
     return stream;
 }
 
-} // namespace hehe
+} // namespace ne

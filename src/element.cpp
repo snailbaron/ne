@@ -1,10 +1,10 @@
-#include <bi/element.hpp>
+#include <ne/element.hpp>
 
 #include <array>
 #include <utility>
 #include <iomanip>
 
-namespace bi {
+namespace ne {
 
 namespace {
 
@@ -165,4 +165,4 @@ std::ostream& operator<<(std::ostream& output, const Element& element)
     return output;
 }
 
-} // namespace bi
+} // namespace ne

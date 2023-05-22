@@ -1,10 +1,10 @@
 #pragma once
 
-#include <hehe/tcp_stream.hpp>
+#include <ne/tcp_stream.hpp>
 
 #include <string>
 
-namespace hehe {
+namespace ne {
 
 class TcpListen {
 public:
@@ -24,4 +24,4 @@ private:
     int _fd = -1;
 };
 
-} // namespace hehe
+} // namespace ne

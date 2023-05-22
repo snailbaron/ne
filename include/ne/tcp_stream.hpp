@@ -1,13 +1,13 @@
 #pragma once
 
-#include <hehe/tcp_streambuf.hpp>
+#include <ne/tcp_streambuf.hpp>
 
 #include <cstdint>
 #include <istream>
 #include <string>
 #include <string_view>
 
-namespace hehe {
+namespace ne {
 
 class TcpStream : public std::iostream {
 public:
@@ -26,4 +26,4 @@ private:
     friend class TcpListen;
 };
 
-} // namespace hehe
+} // namespace ne

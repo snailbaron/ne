@@ -1,7 +1,7 @@
-#include <hehe/tcp_connection.hpp>
+#include <ne/tcp_connection.hpp>
 
-#include <hehe/error.hpp>
-#include <hehe/io.hpp>
+#include <ne/error.hpp>
+#include <ne/io.hpp>
 
 #include <netdb.h>
 #include <sys/socket.h>
@@ -13,7 +13,7 @@
 
 #include <iostream>
 
-namespace hehe {
+namespace ne {
 
 TcpConnection::TcpConnection(std::string_view address, uint16_t port)
 {
@@ -184,4 +184,4 @@ std::string TcpConnection::peer() const
     return stream.str();
 }
 
-} // namespace hehe
+} // namespace ne

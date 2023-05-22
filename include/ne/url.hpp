@@ -7,7 +7,7 @@
 #include <string>
 #include <string_view>
 
-namespace hehe {
+namespace ne {
 
 class URLEncode {
 public:
@@ -34,4 +34,4 @@ struct URL {
 
 std::ostream& operator<<(std::ostream& output, const URL& url);
 
-} // namespace hehe
+} // namespace ne

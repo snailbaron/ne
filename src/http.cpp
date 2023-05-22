@@ -1,11 +1,11 @@
-#include <hehe/http.hpp>
+#include <ne/http.hpp>
 
-#include <hehe/error.hpp>
-#include <hehe/tcp_stream.hpp>
+#include <ne/error.hpp>
+#include <ne/tcp_stream.hpp>
 
 #include <iostream>
 
-namespace hehe::http {
+namespace ne::http {
 
 std::ostream& operator<<(std::ostream& output, Method httpMethod)
 {
@@ -89,4 +89,4 @@ Response request(const Request& request)
     return response;
 }
 
-} // namespace hehe::http
+} // namespace ne::http

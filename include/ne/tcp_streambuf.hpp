@@ -1,6 +1,6 @@
 #pragma once
 
-#include <hehe/tcp_connection.hpp>
+#include <ne/tcp_connection.hpp>
 
 #include <ios>
 #include <locale>
@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-namespace hehe {
+namespace ne {
 
 class TcpStreambuf : public std::streambuf {
 public:
@@ -31,4 +31,4 @@ private:
     std::vector<char> _putArea;
 };
 
-} // namespace hehe
+} // namespace ne

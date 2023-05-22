@@ -1,18 +1,18 @@
-#include <bi/bencoding.hpp>
+#include <ne/bencoding.hpp>
 
 #include <optional>
 #include <stdexcept>
 #include <string>
 #include <string_view>
 
-namespace bi {
+namespace ne {
 
 namespace {
 
 std::string parseString(std::istream& input);
 long long parseRawNumber(std::istream& input);
-bi::Element parseInteger(std::istream& input);
-bi::Element parseList(std::istream& input);
+ne::Element parseInteger(std::istream& input);
+ne::Element parseList(std::istream& input);
 
 constexpr bool isDigit(int c)
 {
@@ -48,7 +48,7 @@ std::string parseString(std::istream& input)
     return string;
 }
 
-bi::Element parseInteger(std::istream& input)
+ne::Element parseInteger(std::istream& input)
 {
     expect(input, "i");
 
@@ -62,12 +62,12 @@ bi::Element parseInteger(std::istream& input)
     expect(input, "e");
     long long result = base * sign;
 
-    return bi::Element{result};
+    return ne::Element{result};
 }
 
-bi::Element parseList(std::istream& input)
+ne::Element parseList(std::istream& input)
 {
-    bi::Element list;
+    ne::Element list;
 
     expect(input, "l");
     while (input.peek() != 'e') {
@@ -78,9 +78,9 @@ bi::Element parseList(std::istream& input)
     return list;
 }
 
-bi::Element parseDictionary(std::istream& input)
+ne::Element parseDictionary(std::istream& input)
 {
-    bi::Element dictionary;
+    ne::Element dictionary;
 
     expect(input, "d");
     while (input.peek() != 'e') {
@@ -95,11 +95,11 @@ bi::Element parseDictionary(std::istream& input)
 
 } // namespace
 
-bi::Element parseElement(std::istream& input)
+ne::Element parseElement(std::istream& input)
 {
     int c = input.peek();
     if (isDigit(c)) {
-        return bi::Element{parseString(input)};
+        return ne::Element{parseString(input)};
     } else if (c == 'i') {
         return parseInteger(input);
     } else if (c == 'l') {
@@ -107,10 +107,10 @@ bi::Element parseElement(std::istream& input)
     } else if (c == 'd') {
         return parseDictionary(input);
     } else if (c == EOF) {
-        return bi::Element::empty;
+        return ne::Element::empty;
     } else {
         throw std::runtime_error{"expected start of new element"};
     }
 }
 
-} // namespace bi
+} // namespace ne

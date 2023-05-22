@@ -9,7 +9,7 @@
 #include <variant>
 #include <vector>
 
-namespace bi {
+namespace ne {
 
 struct Data;
 
@@ -91,4 +91,4 @@ struct Data {
 
 std::ostream& operator<<(std::ostream& output, const Element& element);
 
-} // namespace bi
+} // namespace ne

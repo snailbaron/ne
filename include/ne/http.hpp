@@ -1,6 +1,6 @@
 #pragma once
 
-#include <hehe/url.hpp>
+#include <ne/url.hpp>
 
 #include <cstdint>
 #include <map>
@@ -8,7 +8,7 @@
 #include <string>
 #include <string_view>
 
-namespace hehe::http {
+namespace ne::http {
 
 enum class Method {
     GET,
@@ -44,4 +44,4 @@ std::ostream& operator<<(std::ostream& output, const Response& response);
 
 Response request(const Request& request);
 
-} // namespace hehe::http
+} // namespace ne::http

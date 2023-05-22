@@ -1,10 +1,10 @@
 #pragma once
 
-#include <bi/element.hpp>
+#include <ne/element.hpp>
 
 #include <string>
 
-namespace bi {
+namespace ne {
 
 struct Metainfo {
     struct Info {
@@ -15,7 +15,7 @@ struct Metainfo {
 
     std::string announce;
 
-    std::map<std::string, bi::Element> extra;
+    std::map<std::string, ne::Element> extra;
 };
 
-} // namespace
+} // namespace ne

@@ -8,7 +8,7 @@
 #include <sstream>
 #include <string>
 
-namespace hehe {
+namespace ne {
 
 class Error : public std::exception {
 public:
@@ -52,4 +52,4 @@ inline auto errnoCheck(
     return returnValue;
 }
 
-} // namespace hehe
+} // namespace ne

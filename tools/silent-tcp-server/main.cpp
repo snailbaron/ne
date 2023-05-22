@@ -1,4 +1,4 @@
-#include <hehe.hpp>
+#include <ne.hpp>
 
 #include <array>
 #include <cstddef>
@@ -6,7 +6,7 @@
 #include <iostream>
 #include <string>
 
-using namespace hehe;
+using namespace ne;
 
 int main() try
 {

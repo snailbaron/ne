@@ -1,11 +1,11 @@
-#include <hehe/tcp_streambuf.hpp>
+#include <ne/tcp_streambuf.hpp>
 
-#include <hehe/error.hpp>
+#include <ne/error.hpp>
 
 #include <iostream>
 #include <utility>
 
-namespace hehe {
+namespace ne {
 
 TcpStreambuf::TcpStreambuf(TcpConnection&& connection, size_t bufferSize)
     : _connection{std::move(connection)}
@@ -61,4 +61,4 @@ int TcpStreambuf::pbackfail(int)
     throw Error{"TcpStreambuf::pbackfail called"};
 }
 
-} // namespace hehe
+} // namespace ne

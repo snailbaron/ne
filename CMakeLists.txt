@@ -6,7 +6,9 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 set(CMAKE_COLOR_DIAGNOSTICS TRUE)
 
-add_library(hehe
+add_library(ne
+    src/bencoding.cpp
+    src/element.cpp
     src/http.cpp
     src/io.cpp
     src/tcp_connection.cpp
@@ -15,7 +17,6 @@ add_library(hehe
     src/tcp_streambuf.cpp
     src/url.cpp
 )
-target_include_directories(hehe PUBLIC include)
+target_include_directories(ne PUBLIC include)
 
 add_subdirectory(tools)
-add_subdirectory(src)

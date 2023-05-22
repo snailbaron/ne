@@ -1,8 +1,8 @@
-#include <hehe/tcp_stream.hpp>
+#include <ne/tcp_stream.hpp>
 
 #include <utility>
 
-namespace hehe {
+namespace ne {
 
 TcpStream::TcpStream(std::string_view address, uint16_t port)
     : _streambuf{TcpConnection{address, port}}
@@ -29,4 +29,4 @@ TcpStream& TcpStream::operator=(TcpStream&& other) noexcept
     return *this;
 }
 
-} // namespace hehe
+} // namespace ne

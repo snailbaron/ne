@@ -1,9 +1,9 @@
-#include <hehe/url.hpp>
+#include <ne/url.hpp>
 
 #include <cctype>
 #include <sstream>
 
-namespace hehe {
+namespace ne {
 
 namespace {
 
@@ -74,4 +74,4 @@ std::ostream& operator<<(std::ostream& output, const URL& url)
     return output;
 }
 
-} // namespace hehe
+} // namespace ne

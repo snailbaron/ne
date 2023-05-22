@@ -1,13 +1,13 @@
-#include <hehe/io.hpp>
+#include <ne/io.hpp>
 
-#include <hehe/error.hpp>
+#include <ne/error.hpp>
 
 #include <arpa/inet.h>
 
 #include <array>
 #include <string>
 
-namespace hehe {
+namespace ne {
 
 std::ostream& operator<<(std::ostream& output, const sockaddr_in& addr)
 {
@@ -55,4 +55,4 @@ std::ostream& operator<<(std::ostream& output, const sockaddr_storage& addr)
         std::to_string(addr.ss_family)};
 }
 
-} // namespace hehe
+} // namespace ne

@@ -1,11 +1,11 @@
-#include <hehe.hpp>
+#include <ne.hpp>
 
 #include <iostream>
 
 int main()
 {
-    auto request = hehe::http::Request{
-        .method = hehe::http::Method::GET,
+    auto request = ne::http::Request{
+        .method = ne::http::Method::GET,
         .url {
             .scheme = "http",
             .domain = "google.com",
@@ -17,6 +17,6 @@ int main()
     };
     std::cout << "request:\n" << request;
 
-    auto response = hehe::http::request(request);
+    auto response = ne::http::request(request);
     std::cout << "response:\n" << response << "\n";
 }

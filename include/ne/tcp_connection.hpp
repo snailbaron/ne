@@ -5,7 +5,7 @@
 #include <span>
 #include <string_view>
 
-namespace hehe {
+namespace ne {
 
 class TcpConnection {
 public:
@@ -47,4 +47,4 @@ private:
     friend class TcpStream;
 };
 
-} // namespace hehe
+} // namespace ne
