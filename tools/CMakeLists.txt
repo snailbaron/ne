@@ -1,5 +1,6 @@
 add_subdirectory(chatter-tcp-server)
 add_subdirectory(decode)
+add_subdirectory(decode-metainfo)
 add_subdirectory(http-client)
 add_subdirectory(silent-tcp-server)
 add_subdirectory(tcp-client)

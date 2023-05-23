@@ -11,6 +11,7 @@ add_library(ne
     src/element.cpp
     src/http.cpp
     src/io.cpp
+    src/metainfo.cpp
     src/tcp_connection.cpp
     src/tcp_listen.cpp
     src/tcp_stream.cpp

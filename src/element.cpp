@@ -1,8 +1,9 @@
 #include <ne/element.hpp>
 
 #include <array>
-#include <utility>
 #include <iomanip>
+#include <sstream>
+#include <utility>
 
 namespace ne {
 
@@ -12,7 +13,7 @@ void prettyPrint(
     std::ostream& output, const Element& x, size_t startOffset, size_t offset)
 {
     switch (x.type()) {
-        case Type::Empty:
+        case Type::Null:
             output << std::string(startOffset, ' ') << "<>";
             break;
         case Type::String:
@@ -38,11 +39,7 @@ void prettyPrint(
             for (const auto& [key, value] : x.dictionary()) {
                 output << std::string(offset + 4, ' ') <<
                     "\"" << key << "\"" << " : ";
-                if (key == "pieces") {
-                    output << "<pieces>";
-                } else {
-                    prettyPrint(output, value, 0, offset + 4);
-                }
+                prettyPrint(output, value, 0, offset + 4);
                 output << "\n";
             }
             output << std::string(offset, ' ') << "}";
@@ -65,25 +62,24 @@ std::string name(Type type)
     return names.at(static_cast<size_t>(type));
 }
 
+Element::Element(long long number)
+    : _data(std::make_unique<Data>(Data{.variant = number}))
+{ }
+
+Element::Element(std::string string)
+    : _data(std::make_unique<Data>(Data{.variant = std::move(string)}))
+{ }
+
 Element::Element(const Element& other)
-{
-    *_data = *other._data;
-}
+    : _data(std::make_unique<Data>(*other._data))
+{ }
 
 Element& Element::operator=(const Element& other)
 {
-    *_data = *other._data;
+    if (this != &other) {
+        *_data = *other._data;
+    }
     return *this;
-}
-
-Element::Element(long long number)
-{
-    _data->variant.emplace<long long>(number);
-}
-
-Element::Element(std::string string)
-{
-    _data->variant.emplace<std::string>(std::move(string));
 }
 
 Type Element::type() const
@@ -101,26 +97,30 @@ const std::string& Element::string() const
     return _data->as<Type::String>();
 }
 
+std::span<const std::byte> Element::bytes() const
+{
+    const auto& string = this->string();
+    return {reinterpret_cast<const std::byte*>(string.data()), string.length()};
+}
+
 const std::vector<Element>& Element::list() const
 {
     return _data->as<Type::List>();
 }
 
-const std::map<std::string, Element> Element::dictionary() const
+const std::map<std::string, Element>& Element::dictionary() const
 {
     return _data->as<Type::Dictionary>();
 }
 
 void Element::append(const Element& element)
 {
-    _data->create<Type::List>();
-    _data->as<Type::List>().push_back(element);
+    _data->create<Type::List>().push_back(element);
 }
 
 void Element::append(Element&& element)
 {
-    _data->create<Type::List>();
-    _data->as<Type::List>().push_back(std::move(element));
+    _data->create<Type::List>().push_back(std::move(element));
 }
 
 const Element& Element::operator[](size_t index) const
@@ -133,15 +133,29 @@ Element& Element::operator[](size_t index)
     return _data->as<Type::List>().at(index);
 }
 
-const Element& Element::operator[](const std::string& key) const
+Element& Element::operator[](const std::string& key)
+{
+    return _data->create<Type::Dictionary>()[key];
+}
+
+Element& Element::operator[](std::string&& key)
+{
+    return _data->create<Type::Dictionary>()[std::move(key)];
+}
+
+Element& Element::at(const std::string& key)
 {
     return _data->as<Type::Dictionary>().at(key);
 }
 
-Element& Element::operator[](const std::string& key)
+const Element& Element::at(const std::string& key) const
 {
-    _data->create<Type::Dictionary>();
-    return _data->as<Type::Dictionary>()[key];
+    return _data->as<Type::Dictionary>().at(key);
+}
+
+bool Element::contains(const std::string& key) const
+{
+    return _data->as<Type::Dictionary>().contains(key);
 }
 
 size_t Element::size() const
@@ -152,7 +166,10 @@ size_t Element::size() const
     return _data->as<Type::Dictionary>().size();
 }
 
-const Element Element::empty {};
+bool Element::empty() const
+{
+    return this->size() == 0;
+}
 
 Type Data::type() const
 {
@@ -163,6 +180,18 @@ std::ostream& operator<<(std::ostream& output, const Element& element)
 {
     prettyPrint(output, element, 0, 0);
     return output;
+}
+
+std::string toString(const Element& element)
+{
+    auto stream = std::ostringstream{};
+    stream << element;
+    return stream.str();
+}
+
+void prettyPrint(std::ostream& output, const Element& x, size_t offset)
+{
+    prettyPrint(output, x, 0, offset);
 }
 
 } // namespace ne

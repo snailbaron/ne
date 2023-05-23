@@ -107,7 +107,7 @@ ne::Element parseElement(std::istream& input)
     } else if (c == 'd') {
         return parseDictionary(input);
     } else if (c == EOF) {
-        return ne::Element::empty;
+        return ne::Element{};
     } else {
         throw std::runtime_error{"expected start of new element"};
     }

@@ -5,6 +5,7 @@
 #include <map>
 #include <memory>
 #include <ostream>
+#include <span>
 #include <string>
 #include <variant>
 #include <vector>
@@ -14,7 +15,7 @@ namespace ne {
 struct Data;
 
 enum class Type : size_t {
-    Empty,
+    Null,
     Number,
     String,
     List,
@@ -26,30 +27,39 @@ std::string name(Type type);
 class Element {
 public:
     Element() = default;
+    explicit Element(long long number);
+    explicit Element(std::string string);
+
     Element(const Element& other);
     Element& operator=(const Element& other);
 
-    explicit Element(long long number);
-    explicit Element(std::string string);
+    Element(Element&& other) = default;
+    Element& operator=(Element&& other) = default;
+
+    ~Element() = default;
 
     Type type() const;
 
     long long number() const;
     const std::string& string() const;
+    std::span<const std::byte> bytes() const;
     const std::vector<Element>& list() const;
-    const std::map<std::string, Element> dictionary() const;
+    const std::map<std::string, Element>& dictionary() const;
 
     void append(const Element& element);
     void append(Element&& element);
 
     const Element& operator[](size_t index) const;
     Element& operator[](size_t index);
-    const Element& operator[](const std::string& key) const;
+
     Element& operator[](const std::string& key);
+    Element& operator[](std::string&& key);
+    Element& at(const std::string& key);
+    const Element& at(const std::string& key) const;
+    bool contains(const std::string& key) const;
 
     size_t size() const;
-
-    static const Element empty;
+    bool empty() const;
 
 private:
     std::unique_ptr<Data> _data = std::make_unique<Data>();
@@ -66,12 +76,13 @@ struct Data {
     Type type() const;
 
     template <Type type>
-    void create()
+    auto& create()
     {
-        if (this->type() == Type::Empty) {
+        if (this->type() == Type::Null) {
             constexpr auto index = static_cast<size_t>(type);
             variant.emplace<std::variant_alternative_t<index, VariantType>>();
         }
+        return this->as<type>();
     }
 
     template <Type type>
@@ -90,5 +101,8 @@ struct Data {
 };
 
 std::ostream& operator<<(std::ostream& output, const Element& element);
+std::string toString(const Element& element);
+
+void prettyPrint(std::ostream& output, const Element& x, size_t offset);
 
 } // namespace ne
