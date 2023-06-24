@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ne/element.hpp>
+#include <ne/sha.hpp>
 
 #include <array>
 #include <cstddef>
@@ -23,16 +24,6 @@ public:
 
 private:
     size_t _sizeInBytes = 0;
-};
-
-class SHA1 {
-public:
-    SHA1(std::span<const std::byte, 20> data);
-
-    friend std::ostream& operator<<(std::ostream& output, const SHA1& sha1);
-
-private:
-    std::array<std::byte, 20> _bytes {};
 };
 
 // Content of a metainfo file, as described here:

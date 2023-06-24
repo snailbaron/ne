@@ -4,6 +4,7 @@
 #include <ne/http.hpp>
 #include <ne/io.hpp>
 #include <ne/metainfo.hpp>
+#include <ne/sha.hpp>
 #include <ne/tcp_connection.hpp>
 #include <ne/tcp_listen.hpp>
 #include <ne/tcp_stream.hpp>

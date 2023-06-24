@@ -33,21 +33,6 @@ std::ostream& operator<<(std::ostream& output, Size size)
     return output << size._sizeInBytes;
 }
 
-SHA1::SHA1(std::span<const std::byte, 20> data)
-{
-    std::copy(data.begin(), data.end(), _bytes.begin());
-}
-
-std::ostream& operator<<(std::ostream& output, const SHA1& sha1)
-{
-    output << std::hex;
-    output.fill('0');
-    for (std::byte b : sha1._bytes) {
-        output << std::setw(2) << static_cast<int>(b);
-    }
-    return output << std::dec;
-}
-
 std::ostream& operator<<(std::ostream& output, const Metainfo& metainfo)
 {
     output <<
