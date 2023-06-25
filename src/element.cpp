@@ -123,12 +123,12 @@ void Element::append(Element&& element)
     _data->create<Type::List>().push_back(std::move(element));
 }
 
-const Element& Element::operator[](size_t index) const
+Element& Element::operator[](size_t index)
 {
     return _data->as<Type::List>().at(index);
 }
 
-Element& Element::operator[](size_t index)
+const Element& Element::operator[](size_t index) const
 {
     return _data->as<Type::List>().at(index);
 }
@@ -171,7 +171,7 @@ bool Element::empty() const
     return this->size() == 0;
 }
 
-Type Data::type() const
+constexpr Type Data::type() const
 {
     return Type{variant.index()};
 }

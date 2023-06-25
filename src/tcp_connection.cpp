@@ -48,10 +48,9 @@ void TcpConnection::connect(std::string_view address, uint16_t port)
 {
     addrinfo* info = nullptr;
     {
-        const auto desiredInfo = addrinfo{
-            .ai_family = AF_UNSPEC,
-            .ai_socktype = SOCK_STREAM,
-        };
+        auto desiredInfo = addrinfo{};
+        desiredInfo.ai_family = AF_UNSPEC;
+        desiredInfo.ai_socktype = SOCK_STREAM;
         if (auto code = ::getaddrinfo(
                 std::string{address}.c_str(),
                 std::to_string(port).c_str(),

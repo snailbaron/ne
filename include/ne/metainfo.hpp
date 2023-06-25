@@ -45,6 +45,7 @@ struct Metainfo {
 
     std::string announce;
     Info info;
+    SHA1 infoHash;
 
     std::map<std::string, ne::Element> extra;
 };

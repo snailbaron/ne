@@ -49,13 +49,14 @@ public:
     void append(const Element& element);
     void append(Element&& element);
 
-    const Element& operator[](size_t index) const;
     Element& operator[](size_t index);
+    const Element& operator[](size_t index) const;
 
     Element& operator[](const std::string& key);
     Element& operator[](std::string&& key);
     Element& at(const std::string& key);
     const Element& at(const std::string& key) const;
+
     bool contains(const std::string& key) const;
 
     size_t size() const;
@@ -73,10 +74,10 @@ struct Data {
         std::vector<Element>,
         std::map<std::string, Element>>;
 
-    Type type() const;
+    constexpr Type type() const;
 
     template <Type type>
-    auto& create()
+    constexpr auto& create()
     {
         if (this->type() == Type::Null) {
             constexpr auto index = static_cast<size_t>(type);
@@ -86,13 +87,13 @@ struct Data {
     }
 
     template <Type type>
-    const auto& as() const
+    constexpr auto& as()
     {
         return std::get<static_cast<size_t>(type)>(variant);
     }
 
     template <Type type>
-    auto& as()
+    constexpr const auto& as() const
     {
         return std::get<static_cast<size_t>(type)>(variant);
     }

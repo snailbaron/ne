@@ -6,6 +6,7 @@
 
 namespace ne {
 
-ne::Element parseElement(std::istream& input);
+ne::Element bdecode(std::istream& input);
+std::string bencode(const ne::Element& element);
 
 } // namespace ne

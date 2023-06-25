@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <iomanip>
+#include <sstream>
 #include <stdexcept>
 #include <vector>
 
@@ -13,15 +14,6 @@
 namespace ne {
 
 namespace {
-
-constexpr uint32_t byteswap(uint32_t number)
-{
-    return
-        ((number & 0xFF000000) >> 24) +
-        ((number & 0x00FF0000) >> 8) +
-        ((number & 0x0000FF00) << 8) +
-        ((number & 0x000000FF) << 24);
-}
 
 class ShaByteStream {
 public:
@@ -98,6 +90,13 @@ private:
 SHA1::SHA1(std::span<const std::byte, 20> data)
 {
     std::copy(data.begin(), data.end(), _bytes.begin());
+}
+
+std::string SHA1::string() const
+{
+    auto output = std::ostringstream{};
+    output << *this;
+    return output.str();
 }
 
 std::ostream& operator<<(std::ostream& output, const SHA1& sha1)
@@ -198,6 +197,12 @@ SHA1 sha1(std::istream& stream)
     };
 
     return SHA1{hh};
+}
+
+SHA1 sha1(std::string_view string)
+{
+    auto stream = std::istringstream{std::string{string}};
+    return sha1(stream);
 }
 
 } // namespace ne

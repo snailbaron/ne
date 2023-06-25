@@ -1,6 +1,7 @@
 #include <ne/bencoding.hpp>
 
 #include <optional>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -36,6 +37,11 @@ long long parseRawNumber(std::istream& input)
     while (isDigit(input.peek())) {
         s += (char)input.get();
     }
+
+    if (s.length() > 1 && s.front() == '0') {
+        throw std::runtime_error{"leading zero in integer: " + s};
+    }
+
     return std::stoll(s);
 }
 
@@ -59,6 +65,10 @@ ne::Element parseInteger(std::istream& input)
     }
 
     auto base = parseRawNumber(input);
+    if (!sign && base == 0) {
+        throw std::runtime_error{"-0 is not allowed"};
+    }
+
     expect(input, "e");
     long long result = base * sign;
 
@@ -71,7 +81,7 @@ ne::Element parseList(std::istream& input)
 
     expect(input, "l");
     while (input.peek() != 'e') {
-        list.append(parseElement(input));
+        list.append(bdecode(input));
     }
     expect(input, "e");
 
@@ -83,9 +93,16 @@ ne::Element parseDictionary(std::istream& input)
     ne::Element dictionary;
 
     expect(input, "d");
+    auto previousKey = std::optional<std::string>{};
     while (input.peek() != 'e') {
         auto key = parseString(input);
-        auto value = parseElement(input);
+        if (previousKey && previousKey >= key) {
+            throw std::runtime_error{
+                "dictionary keys must be lexicographically sorted, but [" +
+                    *previousKey + "] >= [" + key + "]"
+            };
+        }
+        auto value = bdecode(input);
         dictionary[key] = value;
     }
     expect(input, "e");
@@ -93,9 +110,14 @@ ne::Element parseDictionary(std::istream& input)
     return dictionary;
 }
 
+std::string encodeString(const std::string& string)
+{
+    return std::to_string(string.length()) + ":" + string;
+}
+
 } // namespace
 
-ne::Element parseElement(std::istream& input)
+ne::Element bdecode(std::istream& input)
 {
     int c = input.peek();
     if (isDigit(c)) {
@@ -111,6 +133,40 @@ ne::Element parseElement(std::istream& input)
     } else {
         throw std::runtime_error{"expected start of new element"};
     }
+}
+
+std::string bencode(const ne::Element& element)
+{
+    switch (element.type()) {
+        case Type::Null: return "";
+        case Type::Number:
+            return "i" + std::to_string(element.number()) + "e";
+        case Type::String:
+            return encodeString(element.string());
+        case Type::List:
+        {
+            auto output = std::ostringstream{};
+            output << "l";
+            for (const auto& x : element.list()) {
+                output << bencode(x);
+            }
+            output << "e";
+            return output.str();
+        }
+        case Type::Dictionary:
+        {
+            auto output = std::ostringstream{};
+            output << "d";
+            for (const auto& [k, v] : element.dictionary()) {
+                output << encodeString(k) << bencode(v);
+            }
+            output << "e";
+            return output.str();
+        }
+    }
+
+    throw std::runtime_error{"unknown element type: " +
+        std::to_string(static_cast<size_t>(element.type()))};
 }
 
 } // namespace ne

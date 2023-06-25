@@ -18,7 +18,7 @@
 int main(int argc, char* argv[]) try
 {
     if (argc > 2) {
-        std::cerr << "usage: " << argv[0] << " [INPUT_FILE]\n";
+        std::cerr << "usage: bdecode [INPUT_FILE]\n";
         return EXIT_FAILURE;
     }
 
@@ -26,9 +26,9 @@ int main(int argc, char* argv[]) try
     if (argc == 2) {
         auto input = std::ifstream{argv[1]};
         input.exceptions(std::ios::badbit | std::ios::failbit);
-        document = ne::parseElement(input);
+        document = ne::bdecode(input);
     } else {
-        document = ne::parseElement(std::cin);
+        document = ne::bdecode(std::cin);
     }
 
     std::cout << document << "\n";

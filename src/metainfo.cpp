@@ -67,7 +67,7 @@ std::ostream& operator<<(std::ostream& output, const Metainfo& metainfo)
 
 Metainfo decodeMetainfo(std::istream& input)
 {
-    const auto be = parseElement(input);
+    const auto be = bdecode(input);
 
     auto metainfo = Metainfo{};
 
@@ -99,6 +99,8 @@ Metainfo decodeMetainfo(std::istream& input)
             });
         }
     }
+
+    metainfo.infoHash = sha1(bencode(be.at("info")));
 
     for (const auto& [key, value] : be.dictionary()) {
         if (key != "announce" && key != "info") {

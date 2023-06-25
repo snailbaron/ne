@@ -18,11 +18,10 @@ TcpListen::TcpListen(uint16_t port)
 {
     addrinfo* info = nullptr;
     {
-        const auto desiredInfo = addrinfo{
-            .ai_flags = AI_PASSIVE,
-            .ai_family = AF_UNSPEC,
-            .ai_socktype = SOCK_STREAM,
-        };
+        auto desiredInfo = addrinfo{};
+        desiredInfo.ai_flags = AI_PASSIVE;
+        desiredInfo.ai_family = AF_UNSPEC;
+        desiredInfo.ai_socktype = SOCK_STREAM;
         if (auto code = getaddrinfo(
                 nullptr,
                 std::to_string(port).c_str(),

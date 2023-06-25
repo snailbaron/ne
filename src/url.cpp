@@ -37,14 +37,18 @@ void printUrl(std::ostream& output, const URL& url, bool absoluteForm)
 
 } // namespace
 
-URLEncode::URLEncode(std::string_view string)
-    : _string(string)
+template <class DataView>
+URLEncode<DataView>::URLEncode(DataView dataView)
+    : _dataView(dataView)
 { }
 
-std::ostream& operator<<(std::ostream& output, const URLEncode& urlEncode)
+template <class DataView>
+std::ostream& operator<<(
+    std::ostream& output, const URLEncode<DataView>& urlEncode)
 {
     output << std::hex;
-    for (char c : urlEncode._string) {
+    for (auto x : urlEncode._dataView) {
+        auto c = static_cast<char>(x);
         if (isUnreserved(c)) {
             output << c;
         } else {
@@ -54,10 +58,20 @@ std::ostream& operator<<(std::ostream& output, const URLEncode& urlEncode)
     return output << std::dec;
 }
 
-std::string urlEncode(std::string_view string)
+template class URLEncode<std::string_view>;
+template class URLEncode<std::span<const std::byte>>;
+
+std::string urlencode(std::string_view string)
 {
     auto stream = std::ostringstream{};
     stream << URLEncode{string};
+    return stream.str();
+}
+
+std::string urlencode(std::span<const std::byte> bytes)
+{
+    auto stream = std::ostringstream{};
+    stream << URLEncode{bytes};
     return stream.str();
 }
 

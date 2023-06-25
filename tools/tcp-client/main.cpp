@@ -20,8 +20,8 @@ int main(int argc, char* argv[])
     auto connection = ne::TcpConnection{address, port};
 
     auto fds = std::array{
-        pollfd{.fd = STDIN_FILENO, .events = POLLIN},
-        pollfd{.fd = connection.fd(), .events = POLLIN},
+        pollfd{.fd = STDIN_FILENO, .events = POLLIN, .revents = 0},
+        pollfd{.fd = connection.fd(), .events = POLLIN, .revents = 0},
     };
 
     auto buffer = std::array<char, 2 << 20>{};
